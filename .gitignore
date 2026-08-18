@@ -1,1 +1,3 @@
 scripts/.vt-cache.json
+__pycache__/
+*.pyc
