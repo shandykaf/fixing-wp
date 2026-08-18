@@ -4,10 +4,12 @@ Panduan kerja untuk investigasi masalah WordPress: security/malware, error tekni
 
 ## Cara pakai
 
-1. Siapkan folder lokal berisi file dan/atau db website yang bermasalah (di VPS atau PC, bukan di repo ini).
-2. Simpan API key VirusTotal sekali di `scripts/.vt-apikey` (lihat bagian Setup di bawah).
+Gak perlu clone repo ini. Claude Code baca checklist langsung dari raw GitHub URL sesuai instruksi di `prompts/prompt-awal.md`.
+
+1. Siapkan folder lokal berisi file dan/atau db website yang bermasalah (di VPS atau PC).
+2. Simpan API key VirusTotal sekali di `~/.vt-apikey` (home directory, lihat bagian Setup di bawah).
 3. Copy prompt dari `prompts/prompt-awal.md`, isi path lokal dan gejala yang dialami.
-4. Jalankan di Claude Code atau opencode. Claude Code akan baca `00-router.md` dari repo ini, klasifikasi masalahnya, lalu minta konfirmasi kamu sebelum lanjut ke checklist yang sesuai.
+4. Jalankan di Claude Code atau opencode. Claude Code akan baca `00-router.md` dari repo ini, klasifikasi masalahnya, lalu minta konfirmasi kamu sebelum lanjut ke checklist yang sesuai. Kalau checklist security yang kepilih, Claude Code akan download `scripts/vt-hash-check.py` langsung dari raw GitHub URL buat dijalankan.
 
 ## Struktur
 
@@ -37,13 +39,13 @@ Versi lengkap dan terbaru selalu ada di `prompts/prompt-awal.md`, edit di sana k
 
 ## Setup sebelum pakai
 
-Sebelum jalanin prompt di Claude Code, simpan API key VirusTotal sekali di VPS/PC (gak perlu diulang tiap sesi):
+Sebelum jalanin prompt di Claude Code, simpan API key VirusTotal sekali di VPS/PC (gak perlu diulang tiap sesi, dan gak perlu clone repo ini):
 
 ```
-echo "isi_api_key_kamu_sendiri" > scripts/.vt-apikey
+echo "isi_api_key_kamu_sendiri" > ~/.vt-apikey
 ```
 
-File ini otomatis masuk `.gitignore`, jadi gak akan pernah ke-commit ke repo biarpun kamu `git add -A`.
+Disimpan di home directory, di luar repo mana pun, jadi gak akan pernah ke-commit ke GitHub. Kalau mau lokasi lain (folder kerja tempat kamu jalanin script, atau di dalam clone repo di `scripts/.vt-apikey`), script-nya otomatis coba cari di beberapa lokasi juga -- lihat komentar `APIKEY_LOCATIONS` di `scripts/vt-hash-check.py`.
 
 Ambil API key-nya di https://www.virustotal.com/gui/my-apikey (daftar akun gratis dulu kalau belum punya).
 

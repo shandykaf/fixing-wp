@@ -14,12 +14,15 @@ script ini filter dulu SEBELUM kirim ke VirusTotal:
 5. Urutan cek diprioritaskan: wp-content/uploads dulu, lalu file core modified,
    baru sisanya.
 
-Cara pakai di VPS:
-1. Simpan API key sekali di file scripts/.vt-apikey (folder ini, bukan folder WordPress):
-   echo "isi_api_key_kamu" > scripts/.vt-apikey
-   File ini otomatis di-gitignore, jadi gak bakal ke-commit ke repo.
-   (Alternatif: set environment variable VT_API_KEY, dipakai duluan kalau ada.)
-2. Jalankan: python3 vt-hash-check.py /path/ke/folder/wordpress
+Cara pakai di VPS (gak perlu clone repo ini, cukup download file script ini sendirian):
+1. Download: curl -o vt-hash-check.py \
+     https://raw.githubusercontent.com/shandykaf/fixing-wp/main/scripts/vt-hash-check.py
+2. Simpan API key sekali di HOME directory (lokasi tetap, gak peduli kamu jalanin
+   script-nya dari folder mana pun setelah ini):
+   echo "isi_api_key_kamu" > ~/.vt-apikey
+   (Alternatif: set environment variable VT_API_KEY, atau taruh .vt-apikey
+   di folder tempat kamu jalanin script -- lihat APIKEY_LOCATIONS di bawah.)
+3. Jalankan: python3 vt-hash-check.py /path/ke/folder/wordpress
    Opsional: python3 vt-hash-check.py /path/ke/folder/wordpress --report hasil.json
 
 Batasan Public API (dari dokumentasi resmi VirusTotal):
@@ -40,17 +43,26 @@ import urllib.request
 import urllib.error
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-APIKEY_FILE = os.path.join(SCRIPT_DIR, ".vt-apikey")
+
+# Dicari berurutan, yang ketemu duluan dipakai. Boleh taruh di mana saja dari daftar ini,
+# gak harus di dalam repo/clone -- ~/.vt-apikey di home directory paling gampang kalau
+# script ini cuma didownload sendirian (tanpa clone repo).
+APIKEY_LOCATIONS = [
+    os.path.join(os.getcwd(), ".vt-apikey"),          # folder tempat script dijalankan
+    os.path.expanduser("~/.vt-apikey"),                 # home directory, lokasi tetap apa pun cwd-nya
+    os.path.join(SCRIPT_DIR, ".vt-apikey"),             # sebelah script ini (kalau dari clone repo)
+]
 
 
 def load_api_key():
-    """Environment variable duluan (kalau ada), fallback ke file scripts/.vt-apikey."""
+    """Environment variable duluan (kalau ada), fallback ke file .vt-apikey di beberapa lokasi."""
     env_key = os.environ.get("VT_API_KEY")
     if env_key:
         return env_key.strip()
-    if os.path.isfile(APIKEY_FILE):
-        with open(APIKEY_FILE, encoding="utf-8") as f:
-            return f.read().strip()
+    for path in APIKEY_LOCATIONS:
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8") as f:
+                return f.read().strip()
     return None
 
 
@@ -238,7 +250,9 @@ def priority_key(rel_path, is_modified_core):
 def scan_directory(target_dir, report_path=None):
     if not VT_API_KEY:
         print("Error: API key VirusTotal belum ada.")
-        print(f'Simpan sekali: echo "isi_api_key_kamu" > {APIKEY_FILE}')
+        print('Simpan sekali di salah satu lokasi ini (bebas pilih):')
+        for path in APIKEY_LOCATIONS:
+            print(f'  echo "isi_api_key_kamu" > {path}')
         print('Atau set environment variable: export VT_API_KEY="isi_api_key_kamu"')
         sys.exit(1)
 
