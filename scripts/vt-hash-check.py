@@ -9,9 +9,18 @@ script ini filter dulu SEBELUM kirim ke VirusTotal:
    File core yang TIDAK match checksum resmi = MODIFIED, dilaporkan langsung
    (ini temuan penting walau VirusTotal gak kenal hash-nya).
 2. File plugin dari repo resmi yang match checksum downloads.wordpress.org di-skip.
-3. Hash duplikat cuma dicek sekali.
-4. Hasil lookup VirusTotal di-cache lokal, run ulang gak bakar kuota lagi.
-5. Urutan cek diprioritaskan: wp-content/uploads dulu, lalu file core modified,
+3. DEFAULT: dari file yang gak match checksum resmi (biasanya plugin/tema premium
+   yang emang gak ada di repo wordpress.org, bukan berarti mencurigakan), yang
+   dikirim ke VirusTotal cuma yang punya indikasi lokal: ada di wp-content/uploads,
+   file core yang modified, atau isinya match pola backdoor (eval, base64_decode,
+   exec, dll -- daftar sama kayak checklist security). Sisanya (gak ada indikasi
+   sama sekali) di-skip dari VT, cukup dicatat jumlahnya -- ini yang paling
+   mempercepat waktu scan di situs dengan banyak plugin/tema premium.
+   Pakai --all buat matiin filter ini dan kirim SEMUA file ke VT (lebih lambat,
+   cuma perlu kalau memang mau verifikasi menyeluruh tanpa pre-filter).
+4. Hash duplikat cuma dicek sekali.
+5. Hasil lookup VirusTotal di-cache lokal, run ulang gak bakar kuota lagi.
+6. Urutan cek diprioritaskan: wp-content/uploads dulu, lalu file core modified,
    baru sisanya.
 
 Cara pakai di VPS (gak perlu clone repo ini, cukup download file script ini sendirian):
@@ -73,6 +82,40 @@ PLUGIN_CHECKSUM_URL = "https://downloads.wordpress.org/plugin-checksums/{slug}/{
 RATE_LIMIT_DELAY = 16  # detik, biar aman di bawah 4 request/menit (60/4=15, dibulatkan ke atas)
 CACHE_FILE = os.path.join(SCRIPT_DIR, ".vt-cache.json")
 EXTENSIONS = (".php", ".phtml", ".php5", ".php7", ".pht")
+
+# Pola backdoor lokal, dipakai buat pre-filter sebelum kirim ke VT (lihat --all).
+# Sama dengan daftar pola di checklists/01-security-malware.md.
+SUSPICIOUS_PATTERNS = [
+    re.compile(pattern) for pattern in [
+        r"\beval\s*\(",
+        r"\bbase64_decode\s*\(",
+        r"\bgzinflate\s*\(",
+        r"\bgzuncompress\s*\(",
+        r"\bstr_rot13\s*\(",
+        r"\bassert\s*\(",
+        r"\bcreate_function\s*\(",
+        r"preg_replace\s*\([^)]*[\"'][^\"']*\/e[\"']",
+        r"\bsystem\s*\(",
+        r"\bexec\s*\(",
+        r"\bshell_exec\s*\(",
+        r"\bpassthru\s*\(",
+        r"\bpopen\s*\(",
+        r"\bproc_open\s*\(",
+        r"\bextract\s*\(\s*\$_(REQUEST|POST|GET)",
+        r"\$_(POST|GET|REQUEST)\[[^\]]+\]\s*\(",  # variable function: $_POST['x']()
+        r"\\x[0-9a-fA-F]{2}\\x[0-9a-fA-F]{2}\\x[0-9a-fA-F]{2}",  # rangkaian hex escape
+        r"\bmove_uploaded_file\s*\(",
+    ]
+]
+
+
+def has_suspicious_pattern(filepath):
+    try:
+        with open(filepath, encoding="utf-8", errors="replace") as f:
+            content = f.read()
+    except OSError:
+        return False
+    return any(p.search(content) for p in SUSPICIOUS_PATTERNS)
 
 
 def compute_hashes(filepath):
@@ -257,7 +300,7 @@ def priority_key(rel_path, is_modified_core):
     return 2
 
 
-def scan_directory(target_dir, report_path=None):
+def scan_directory(target_dir, report_path=None, scan_all=False):
     if not VT_API_KEY:
         print("Error: API key VirusTotal belum ada.")
         print('Simpan sekali di salah satu lokasi ini (bebas pilih):')
@@ -276,6 +319,7 @@ def scan_directory(target_dir, report_path=None):
     files_to_check = []      # (rel_path, filepath, sha256, is_modified_core)
     modified_core = []       # file core yang gak match checksum resmi — temuan langsung
     skipped_official = 0
+    skipped_no_indicator = []  # gak match checksum resmi TAPI juga gak ada indikasi lokal
 
     for root, _, files in os.walk(target_dir):
         for fname in files:
@@ -304,6 +348,14 @@ def scan_directory(target_dir, report_path=None):
                 if is_modified_core:
                     modified_core.append(rel_path)
 
+            if not scan_all and not is_modified_core and official_md5 is None:
+                # Gak match checksum resmi (biasanya plugin/tema premium) dan bukan core
+                # modified -- cek indikasi lokal dulu sebelum diputuskan kirim ke VT.
+                is_in_uploads = rel_path.startswith("wp-content/uploads/")
+                if not is_in_uploads and not has_suspicious_pattern(filepath):
+                    skipped_no_indicator.append(rel_path)
+                    continue
+
             files_to_check.append((rel_path, filepath, sha256, is_modified_core))
 
     files_to_check.sort(key=lambda item: (priority_key(item[0], item[3]), item[0]))
@@ -314,6 +366,8 @@ def scan_directory(target_dir, report_path=None):
         for p in modified_core:
             print(f"  - {p}")
         print("File-file ini temuan penting walaupun nanti VirusTotal gak kenal hash-nya.")
+    if skipped_no_indicator:
+        print(f"{len(skipped_no_indicator)} file gak match checksum resmi TAPI gak ada indikasi lokal (bukan di uploads, gak ada pola backdoor) -- di-skip dari VT. Pakai --all buat paksa cek semuanya.")
 
     # Dedupe hash: file identik cuma perlu satu lookup
     unique_hashes = []
@@ -410,6 +464,7 @@ def scan_directory(target_dir, report_path=None):
             "vt_flagged": flagged,
             "checked_files": len(files_to_check),
             "unique_hashes": len(unique_hashes),
+            "skipped_no_local_indicator": skipped_no_indicator,
             "stopped_early_quota_exceeded": stopped_early,
         }
         with open(report_path, "w", encoding="utf-8") as f:
@@ -427,7 +482,11 @@ if __name__ == "__main__":
             sys.exit(1)
         report_path = args[idx + 1]
         del args[idx:idx + 2]
+    scan_all = "--all" in args
+    if scan_all:
+        args.remove("--all")
     if len(args) != 1:
-        print("Cara pakai: python3 vt-hash-check.py /path/ke/folder [--report hasil.json]")
+        print("Cara pakai: python3 vt-hash-check.py /path/ke/folder [--report hasil.json] [--all]")
+        print("  --all: matiin pre-filter pola backdoor lokal, kirim SEMUA file (non-checksum-match) ke VT (lebih lambat).")
         sys.exit(1)
-    scan_directory(args[0], report_path)
+    scan_directory(args[0], report_path, scan_all)
