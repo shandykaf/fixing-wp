@@ -230,6 +230,16 @@ def check_hash_vt(file_hash):
         elif e.code == 401:
             return {"error": "unauthorized"}
         elif e.code == 429:
+            # VirusTotal balikin 429 buat dua kasus beda: rate limit per-menit (sementara,
+            # bisa retry) vs kuota harian/bulanan habis (baru reset besok, jangan retry).
+            # Dibedain lewat "code" di body error.
+            try:
+                body = json.loads(e.read().decode())
+                vt_error_code = body.get("error", {}).get("code", "")
+            except Exception:
+                vt_error_code = ""
+            if "Quota" in vt_error_code:
+                return {"error": "quota_exceeded"}
             return {"error": "rate_limited"}
         else:
             return {"error": f"http_{e.code}"}
@@ -325,6 +335,7 @@ def scan_directory(target_dir, report_path=None):
         print()
 
     flagged = []
+    stopped_early = None
     for i, sha256 in enumerate(unique_hashes, 1):
         sample_file = hash_to_files[sha256][0]
         if sha256 in cache:
@@ -335,9 +346,25 @@ def scan_directory(target_dir, report_path=None):
             result = check_hash_vt(sha256)
 
             if result.get("error") == "rate_limited":
-                print("  Kena rate limit, tunggu 60 detik...")
+                print("  Kena rate limit per-menit, tunggu 60 detik...")
                 time.sleep(60)
                 result = check_hash_vt(sha256)
+
+            if result.get("error") == "quota_exceeded":
+                sisa = len(unique_hashes) - i + 1
+                print("\n" + "=" * 60)
+                print("STOP: kuota harian VirusTotal Public API (500 request/hari) habis.")
+                print(f"Baru sempat cek {i - 1} dari {len(unique_hashes)} hash unik. Sisa {sisa} hash belum dicek.")
+                print("Yang sudah kecek sudah ke-cache, jadi run berikutnya lanjut dari sini, gak diulang dari awal.")
+                print("\nOpsi buat lanjut sekarang juga:")
+                print("  1. Tunggu reset kuota (~24 jam dari request pertama hari ini), lalu jalankan ulang command yang sama.")
+                print("  2. Pakai API key VirusTotal dari akun gratis lain: buat/pilih key baru di")
+                print("     https://www.virustotal.com/gui/my-apikey , lalu ganti isi ~/.vt-apikey (atau VT_API_KEY),")
+                print("     lalu jalankan ulang command yang sama -- otomatis lanjut dari sisa yang belum dicek.")
+                print("=" * 60)
+                save_cache(cache)
+                stopped_early = {"checked": i - 1, "remaining": sisa, "total": len(unique_hashes)}
+                break
 
             if result.get("error") == "unauthorized":
                 print("\nError: VirusTotal balas 401 Unauthorized — API key salah atau kadaluarsa.")
@@ -362,6 +389,8 @@ def scan_directory(target_dir, report_path=None):
             print(f"  Bersih menurut {result.get('total_engines', 0)} engine.")
 
     print("\n=== Ringkasan ===")
+    if stopped_early:
+        print(f"BELUM SELESAI: berhenti karena kuota harian habis, {stopped_early['remaining']} dari {stopped_early['total']} hash belum dicek. Lihat instruksi lanjut di atas.")
     print(f"File match checksum resmi (di-skip): {skipped_official}")
     print(f"File core modified (gak match checksum resmi): {len(modified_core)}")
     if flagged:
@@ -381,6 +410,7 @@ def scan_directory(target_dir, report_path=None):
             "vt_flagged": flagged,
             "checked_files": len(files_to_check),
             "unique_hashes": len(unique_hashes),
+            "stopped_early_quota_exceeded": stopped_early,
         }
         with open(report_path, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
