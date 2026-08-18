@@ -19,9 +19,16 @@ Panduan kerja untuk investigasi masalah WordPress: security/malware, error tekni
 ## Prompt awal (cuplikan)
 
 ```
-Saya butuh investigasi masalah website WordPress. Baca panduan kerja dari repo ini dulu: https://github.com/[username]/[repo]/00-router.md, ikuti instruksinya.
+Saya butuh investigasi masalah website WordPress.
+Akses repo ini dulu:
+https://github.com/shandykaf/fixing-wp
 
-File WordPress lokal di [ISI PATH]. Database dump lokal di [ISI PATH]. Gejala yang saya lihat: [ISI].
+Baca panduan kerja dari repo ini dan ikuti instruksinya:
+https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
+
+- File WordPress = [ISI PATH]
+- Database dump = [ISI PATH]
+- Gejala yang saya lihat: [ISI]
 
 Jangan eksekusi apapun sebelum saya konfirmasi di tiap tahap yang diminta router.
 ```
