@@ -1,15 +1,38 @@
 # Checklist: Error Teknis/Situs Down
 
-- Cek error log server (PHP error log, debug.log kalau WP_DEBUG aktif) untuk pesan error spesifik dan timestamp.
+Kalau di tengah investigasi ketemu indikasi kompromi (file backdoor, admin asing, redirect aneh), STOP — pindah ke 01-security-malware.md. Error 500 kadang cuma gejala malware.
+
+## Cek resource server duluan (cepat, sering jadi jawabannya)
+
+- Disk penuh: `df -h` — disk 100% bikin situs down, db error, dan gagal tulis cache/log.
+- Inode habis: `df -i` — bisa "penuh" walau disk masih lega (biasanya karena file cache/session numpuk).
+- RAM/proses: cek apakah PHP-FPM/MySQL mati atau di-kill OOM (`free -m`, error log kernel/hosting).
+
+## Diagnosis
+
+- Cek error log server (PHP error log, debug.log kalau WP_DEBUG aktif) untuk pesan error spesifik dan timestamp. Kalau debug.log gak ada, aktifkan sementara WP_DEBUG_LOG di wp-config.php (WP_DEBUG true, WP_DEBUG_LOG true, WP_DEBUG_DISPLAY false biar error gak tampil ke pengunjung) — matikan lagi setelah selesai.
 - Cocokkan timestamp error dengan riwayat update plugin/tema atau perubahan konfigurasi terakhir.
-- Kalau abis update plugin/tema, disable satu per satu (kalau akses memungkinkan) atau cek changelog buat breaking changes.
 - Cek versi PHP dan kompatibilitasnya dengan plugin/tema terpasang.
 - Cek memory_limit dan max_execution_time kalau errornya terkait timeout/resource.
 - Cek isi .htaccess kalau errornya terkait redirect atau 500 error level server.
-- Cek koneksi database di wp-config.php kalau errornya "error establishing database connection".
 
-Sebelum eksekusi:
+## Isolasi (bisa tanpa akses wp-admin — saat white screen, wp-admin biasanya ikut mati)
+
+- Disable SEMUA plugin sekaligus: rename folder `wp-content/plugins` ke `plugins-off` (atau `wp option update active_plugins ''` via WP-CLI). Kalau situs balik normal, rename balik lalu aktifkan plugin satu per satu sampai ketemu biangnya.
+- Ganti tema ke default tanpa admin: ubah value `template` dan `stylesheet` di wp_options ke tema default (twentytwentyfour dll), atau rename folder tema aktif.
+- Kalau abis update plugin/tema, cek changelog buat breaking changes sebelum nyalahin yang lain.
+
+## Kalau errornya "error establishing database connection"
+
+- Cek kredensial di wp-config.php (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST).
+- Cek service MySQL-nya hidup atau enggak (`systemctl status mysql` / dari cPanel) — jangan asumsi masalahnya di kredensial.
+- Cek tabel crashed: `wp db check` atau `mysqlcheck`, repair kalau perlu (`REPAIR TABLE`) — backup db dulu sebelum repair.
+
+## Sebelum eksekusi
+
 Laporkan dugaan akar masalah beserta bukti pendukung (log, timestamp, versi). Tunggu konfirmasi sebelum ubah apapun.
 
-Setelah selesai:
-Ringkasan root cause + rekomendasi biar gak terulang (pin versi plugin, tambah monitoring, dll).
+## Setelah selesai
+
+- Balikin yang sifatnya sementara: WP_DEBUG off, folder yang di-rename, dll.
+- Ringkasan root cause + rekomendasi biar gak terulang (pin versi plugin, tambah monitoring disk/uptime, dll).
