@@ -7,9 +7,9 @@ Panduan kerja untuk investigasi masalah WordPress: security/malware, error tekni
 Gak perlu clone repo ini. Claude Code baca checklist langsung dari raw GitHub URL sesuai instruksi di `prompts/prompt-awal.md`.
 
 1. Siapkan folder lokal berisi file dan/atau db website yang bermasalah (di VPS atau PC).
-2. Simpan API key VirusTotal sekali di `~/.vt-apikey` (home directory, lihat bagian Setup di bawah).
-3. Copy prompt dari `prompts/prompt-awal.md`, isi path lokal dan gejala yang dialami.
-4. Jalankan di Claude Code atau opencode. Claude Code akan baca `00-router.md` dari repo ini, klasifikasi masalahnya, lalu minta konfirmasi kamu sebelum lanjut ke checklist yang sesuai. Kalau checklist security yang kepilih, Claude Code akan download `scripts/vt-hash-check.py` langsung dari raw GitHub URL buat dijalankan.
+2. Copy prompt dari `prompts/prompt-awal.md`, isi path lokal dan gejala yang dialami.
+3. Jalankan di Claude Code atau opencode. Claude Code akan baca `00-router.md` dari repo ini, klasifikasi masalahnya, lalu minta konfirmasi kamu sebelum lanjut ke checklist yang sesuai.
+4. Kalau checklist security yang kepilih dan butuh VirusTotal: Claude Code yang urus semuanya sendiri (cek/bikin file API key di `~/.vt-apikey`, ambil script-nya, jalankan). Kalau API key belum ada, Claude bakal nanya di chat lalu bikinkan filenya sendiri — kamu gak perlu ketik command apa pun, tinggal kasih key-nya waktu ditanya.
 
 ## Struktur
 
@@ -39,15 +39,12 @@ Versi lengkap dan terbaru selalu ada di `prompts/prompt-awal.md`, edit di sana k
 
 ## Setup sebelum pakai
 
-Sebelum jalanin prompt di Claude Code, simpan API key VirusTotal sekali di VPS/PC (gak perlu diulang tiap sesi, dan gak perlu clone repo ini):
+Gak ada yang perlu disiapkan manual duluan. API key VirusTotal ditangani otomatis oleh Claude Code pas checklist security dijalankan (lihat bagian "Setup VirusTotal" di `checklists/01-security-malware.md`):
 
-```
-echo "isi_api_key_kamu_sendiri" > ~/.vt-apikey
-```
+- Kalau `~/.vt-apikey` belum ada, Claude bakal nanya API key-nya ke kamu di chat, terus Claude sendiri yang bikin filenya.
+- Kalau sudah pernah dibuatkan sebelumnya di mesin yang sama, Claude langsung pakai itu, gak nanya ulang.
 
-Disimpan di home directory, di luar repo mana pun, jadi gak akan pernah ke-commit ke GitHub. Kalau mau lokasi lain (folder kerja tempat kamu jalanin script, atau di dalam clone repo di `scripts/.vt-apikey`), script-nya otomatis coba cari di beberapa lokasi juga -- lihat komentar `APIKEY_LOCATIONS` di `scripts/vt-hash-check.py`.
-
-Ambil API key-nya di https://www.virustotal.com/gui/my-apikey (daftar akun gratis dulu kalau belum punya).
+Satu-satunya yang perlu kamu siapkan sendiri di luar chat: daftar akun VirusTotal gratis dan ambil API key-nya di https://www.virustotal.com/gui/my-apikey, biar ada yang bisa dikasih waktu ditanya Claude.
 
 ## Batasan penting
 
