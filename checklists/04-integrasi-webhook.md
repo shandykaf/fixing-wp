@@ -15,6 +15,7 @@ Kalau di tengah investigasi ketemu indikasi kompromi, STOP — pindah ke 01-secu
 - Cek signature/secret verification di kode webhook handler, sering jadi penyebab request ditolak diam-diam.
 - Cek apakah endpoint URL di provider dashboard masih sesuai dengan yang aktif di server (ganti domain/SSL bisa bikin mismatch).
 - Cek payload yang diterima vs yang diharapkan kode (field API kadang berubah setelah update dari provider).
+- Kalau ada backup dari sebelum integrasi ini bermasalah (lihat "Sumber data berupa backup" di `00-router.md`): diff file webhook handler/config vs backup lama buat cek apakah ada perubahan kode yang gak disengaja (bukan cuma dugaan perubahan dari sisi provider).
 - Cek status job/cron kalau prosesnya async (queue gak jalan, worker mati, dll).
 - Replay webhook buat reproduce: pakai fitur resend/replay di dashboard provider kalau ada, atau simulasi via curl dengan payload contoh + signature valid. Ini dipakai sejak diagnosis, bukan cuma pas test akhir.
 

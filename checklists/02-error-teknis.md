@@ -12,6 +12,7 @@ Kalau di tengah investigasi ketemu indikasi kompromi (file backdoor, admin asing
 
 - Cek error log server (PHP error log, debug.log kalau WP_DEBUG aktif) untuk pesan error spesifik dan timestamp. Kalau debug.log gak ada, aktifkan sementara WP_DEBUG_LOG di wp-config.php (WP_DEBUG true, WP_DEBUG_LOG true, WP_DEBUG_DISPLAY false biar error gak tampil ke pengunjung) — matikan lagi setelah selesai.
 - Cocokkan timestamp error dengan riwayat update plugin/tema atau perubahan konfigurasi terakhir.
+- Kalau ada backup dari sebelum situs down (lihat "Sumber data berupa backup" di `00-router.md`): diff file (terutama wp-config.php, .htaccess, dan plugin/tema yang baru diupdate) vs backup lama buat cepat nemuin perubahan yang memicu error, tanpa perlu nebak-nebak dari log doang.
 - Cek versi PHP dan kompatibilitasnya dengan plugin/tema terpasang.
 - Cek memory_limit dan max_execution_time kalau errornya terkait timeout/resource.
 - Cek isi .htaccess kalau errornya terkait redirect atau 500 error level server.

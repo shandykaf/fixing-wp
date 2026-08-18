@@ -5,6 +5,7 @@ Kalau di tengah investigasi ketemu indikasi kompromi (proses aneh makan CPU, fil
 ## Tentukan arah dulu: masalah backend atau frontend?
 
 - Ukur TTFB terpisah dari skor frontend (`curl -o /dev/null -w "%{time_starttransfer}\n" https://domain/`). TTFB tinggi (> ~1 detik) = masalah server/PHP/database — perbaikan minify/delay JS gak akan nolong. TTFB normal tapi loading lambat = masalah frontend/asset.
+- Kalau ada backup dari sebelum situs jadi lambat (lihat "Sumber data berupa backup" di `00-router.md`): bandingkan daftar plugin aktif & file wp-content vs backup lama buat langsung nemuin plugin/script apa yang baru ditambah sekitar waktu situs mulai lambat.
 
 ## Kalau backend lambat
 

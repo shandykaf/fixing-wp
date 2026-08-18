@@ -29,3 +29,14 @@ Setelah klasifikasi, sebutkan nama file checklist yang harus dibaca:
 - Kategori 5 → 05-performance-konflik.md
 
 Tunggu konfirmasi saya sebelum baca file checklist itu dan mulai eksekusi.
+
+---
+
+## Sumber data berupa backup (WPvivid atau plugin backup lain)
+
+Berlaku di semua kategori, bukan cuma security. Kalau file/db yang dikasih user bukan folder WordPress aktif tapi hasil backup dari plugin (WPvivid, UpdraftPlus, dll):
+
+- Formatnya biasanya zip terpisah antara file dan db (contoh WPvivid: `wpvividbackup_*_files_*.zip` dan `wpvividbackup_*_db_*.zip` isinya `.sql`). Kalau situsnya besar, file zip-nya sering displit jadi beberapa part (`_files_1.zip`, `_files_2.zip`, dst) — ekstrak SEMUA part, jangan cuma yang pertama.
+- Kalau backup di-enkripsi (fitur premium beberapa plugin backup), minta password enkripsinya ke user dulu sebelum bisa diekstrak.
+- Backup gak otomatis berarti "bersih" — kalau diambil setelah masalah muncul, isinya ikut kebawa masalah yang sama. Tetap diperlakukan sesuai checklist kategori yang dipilih, bukan dilewati begitu aja.
+- **Kalau ada beberapa backup dari tanggal berbeda**, ini baseline yang berharga: ekstrak backup paling lama (dari sebelum gejala muncul) dan bandingkan (diff nama file + hash, atau isi db) dengan kondisi situs sekarang. File/baris db yang beda antara backup lama vs sekarang biasanya nunjuk langsung ke penyebabnya — dipakai di tiap kategori sesuai konteksnya (lihat checklist masing-masing).
