@@ -5,7 +5,7 @@ Panduan kerja untuk investigasi masalah WordPress: security/malware, error tekni
 ## Cara pakai
 
 1. Siapkan folder lokal berisi file dan/atau db website yang bermasalah (di VPS atau PC, bukan di repo ini).
-2. Set environment variable API key VirusTotal (lihat bagian Setup di bawah).
+2. Simpan API key VirusTotal sekali di `scripts/.vt-apikey` (lihat bagian Setup di bawah).
 3. Copy prompt dari `prompts/prompt-awal.md`, isi path lokal dan gejala yang dialami.
 4. Jalankan di Claude Code atau opencode. Claude Code akan baca `00-router.md` dari repo ini, klasifikasi masalahnya, lalu minta konfirmasi kamu sebelum lanjut ke checklist yang sesuai.
 
@@ -37,13 +37,15 @@ Versi lengkap dan terbaru selalu ada di `prompts/prompt-awal.md`, edit di sana k
 
 ## Setup sebelum pakai
 
-Sebelum jalanin prompt di Claude Code, set environment variable dulu di VPS/PC:
+Sebelum jalanin prompt di Claude Code, simpan API key VirusTotal sekali di VPS/PC (gak perlu diulang tiap sesi):
 
 ```
-export VT_API_KEY="isi_api_key_kamu_sendiri"
+echo "isi_api_key_kamu_sendiri" > scripts/.vt-apikey
 ```
 
-Key ini TIDAK disimpan di repo ini dan tidak boleh pernah di-commit. Kamu perlu set ulang tiap sesi terminal baru, atau tambahin ke `.bashrc`/`.zshrc` kalau mau permanen di mesin itu.
+File ini otomatis masuk `.gitignore`, jadi gak akan pernah ke-commit ke repo biarpun kamu `git add -A`.
+
+Ambil API key-nya di https://www.virustotal.com/gui/my-apikey (daftar akun gratis dulu kalau belum punya).
 
 ## Batasan penting
 

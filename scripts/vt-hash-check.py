@@ -15,8 +15,10 @@ script ini filter dulu SEBELUM kirim ke VirusTotal:
    baru sisanya.
 
 Cara pakai di VPS:
-1. Simpan API key di environment variable, JANGAN hardcode di script:
-   export VT_API_KEY="isi_api_key_kamu"
+1. Simpan API key sekali di file scripts/.vt-apikey (folder ini, bukan folder WordPress):
+   echo "isi_api_key_kamu" > scripts/.vt-apikey
+   File ini otomatis di-gitignore, jadi gak bakal ke-commit ke repo.
+   (Alternatif: set environment variable VT_API_KEY, dipakai duluan kalau ada.)
 2. Jalankan: python3 vt-hash-check.py /path/ke/folder/wordpress
    Opsional: python3 vt-hash-check.py /path/ke/folder/wordpress --report hasil.json
 
@@ -37,12 +39,27 @@ import json
 import urllib.request
 import urllib.error
 
-VT_API_KEY = os.environ.get("VT_API_KEY")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+APIKEY_FILE = os.path.join(SCRIPT_DIR, ".vt-apikey")
+
+
+def load_api_key():
+    """Environment variable duluan (kalau ada), fallback ke file scripts/.vt-apikey."""
+    env_key = os.environ.get("VT_API_KEY")
+    if env_key:
+        return env_key.strip()
+    if os.path.isfile(APIKEY_FILE):
+        with open(APIKEY_FILE, encoding="utf-8") as f:
+            return f.read().strip()
+    return None
+
+
+VT_API_KEY = load_api_key()
 VT_BASE_URL = "https://www.virustotal.com/api/v3/files/"
 WP_CHECKSUM_URL = "https://api.wordpress.org/core/checksums/1.0/?version={version}&locale={locale}"
 PLUGIN_CHECKSUM_URL = "https://downloads.wordpress.org/plugin-checksums/{slug}/{version}.json"
 RATE_LIMIT_DELAY = 16  # detik, biar aman di bawah 4 request/menit (60/4=15, dibulatkan ke atas)
-CACHE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".vt-cache.json")
+CACHE_FILE = os.path.join(SCRIPT_DIR, ".vt-cache.json")
 EXTENSIONS = (".php", ".phtml", ".php5", ".php7", ".pht")
 
 
@@ -220,8 +237,9 @@ def priority_key(rel_path, is_modified_core):
 
 def scan_directory(target_dir, report_path=None):
     if not VT_API_KEY:
-        print("Error: environment variable VT_API_KEY belum di-set.")
-        print('Jalankan dulu: export VT_API_KEY="isi_api_key_kamu"')
+        print("Error: API key VirusTotal belum ada.")
+        print(f'Simpan sekali: echo "isi_api_key_kamu" > {APIKEY_FILE}')
+        print('Atau set environment variable: export VT_API_KEY="isi_api_key_kamu"')
         sys.exit(1)
 
     target_dir = os.path.abspath(target_dir)

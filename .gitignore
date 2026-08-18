@@ -1,3 +1,4 @@
 scripts/.vt-cache.json
+scripts/.vt-apikey
 __pycache__/
 *.pyc
