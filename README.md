@@ -30,7 +30,7 @@ https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
 
 - File WordPress = ISI_PATH
 - Database dump = ISI_PATH
-- Gejala yang saya lihat = ISI
+- Gejala yang saya lihat = ISI_GEJALA
 
 Jangan eksekusi apapun sebelum saya konfirmasi di tiap tahap yang diminta router.
 ```
