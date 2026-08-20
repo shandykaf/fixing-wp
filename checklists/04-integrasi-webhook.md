@@ -30,3 +30,5 @@ Laporkan di titik mana rantai integrasi ini putus (provider gak kirim, request d
 ## Setelah selesai
 
 Test end-to-end pakai transaksi/data dummy dulu sebelum dianggap fix di live. Test juga skenario retry (kirim payload sama dua kali) buat mastiin gak dobel proses.
+
+**Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya test end-to-end sekarang ya") lalu langsung jalanin test transaksi dummy via browser otomatis (checkout/flow yang relevan) — gak perlu diminta terpisah. Kalau testnya butuh transaksi beneran (bukan sandbox/dummy) yang bisa kena biaya nyata, konfirmasi dulu ke user sebelum jalan.

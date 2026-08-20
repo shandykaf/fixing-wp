@@ -18,3 +18,5 @@ Jelaskan akar masalah dan lokasi kode yang akan diubah. Tunggu konfirmasi sebelu
 
 Setelah selesai:
 Test ulang skenario reproduce dari awal buat mastiin fix beneran jalan, bukan cuma nutup gejala. Purge cache lagi sebelum test biar hasilnya valid.
+
+**Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya test ulang lewat browser ya") lalu langsung ulangi skenario reproduce via browser otomatis di situs live — gak perlu diminta terpisah. Ini cuma testing (baca/interaksi buat verifikasi), bukan ubah kode/setting apapun.
