@@ -50,8 +50,43 @@ Berlaku di semua kategori — dibutuhkan tiap kali checklist nyebut "browser oto
 Claude WAJIB cek dan setup ini sendiri, tanpa minta user ketik command:
 
 1. Cek apakah tool browser udah tersedia (browser tool bawaan, atau MCP server Playwright yang udah keregister). Kalau udah ada, lanjut aja, gak perlu install ulang.
-2. Kalau belum ada, install & register sendiri sesuai tool yang lagi dipakai:
-   - **Claude Code**: jalankan `claude mcp add playwright -- npx -y @playwright/mcp@latest` (pakai `-s user` di belakangnya kalau mau kepasang permanen buat semua project di mesin itu, bukan cuma project ini) lewat tool Bash — bukan suruh user jalanin manual.
-   - **opencode atau tool lain yang support MCP**: cek dokumentasi config MCP tool tersebut (biasanya file config kayak `opencode.json`/`opencode.jsonc` dengan section `mcp`), lalu Claude tulis sendiri entry-nya via tool Write. Isinya intinya daftarin command `npx -y @playwright/mcp@latest` sebagai MCP server.
+2. Kalau belum ada, install & register sendiri sesuai tool yang lagi dipakai. Servernya sama di semua tool (`npx -y @playwright/mcp@latest`), yang beda cuma cara daftarinnya:
+
+   - **Claude Code** — jalankan lewat tool Bash:
+     ```
+     claude mcp add playwright -- npx -y @playwright/mcp@latest
+     ```
+     (tambah `-s user` kalau mau kepasang permanen buat semua project di mesin itu, bukan cuma project ini)
+
+   - **opencode** — tulis/merge ke `opencode.json` (atau `opencode.jsonc`) via tool Write:
+     ```json
+     {
+       "$schema": "https://opencode.ai/config.json",
+       "mcp": {
+         "playwright": {
+           "type": "local",
+           "command": ["npx", "-y", "@playwright/mcp@latest"],
+           "enabled": true
+         }
+       }
+     }
+     ```
+
+   - **Cursor** — tulis/merge ke `.cursor/mcp.json` (project) atau `~/.cursor/mcp.json` (global) via tool Write:
+     ```json
+     {
+       "mcpServers": {
+         "playwright": {
+           "type": "stdio",
+           "command": "npx",
+           "args": ["-y", "@playwright/mcp@latest"]
+         }
+       }
+     }
+     ```
+
+   - **Tool lain yang support MCP** (Windsurf, Cline, Zed, dll): formatnya mirip salah satu di atas — kebanyakan pakai pola `mcpServers` + `command`/`args` seperti Cursor. Cek dokumentasi MCP tool tersebut, lalu tulis entry-nya sendiri via tool Write.
+
+   Penting: kalau file config-nya udah ada isinya, MERGE entry playwright ke dalamnya — jangan timpa seluruh file dan hilangin config user yang lain.
 3. Setelah keregister, reconnect/restart sesi MCP kalau tool-nya butuh itu, lalu verifikasi tool browser beneran muncul dan bisa dipanggil sebelum lanjut ke audit/setup/fixing/verifikasi via browser.
 4. Kalau ternyata tool yang dipakai gak support MCP sama sekali dan gak ada browser tool bawaan: infokan ke user bagian browser-otomatis di checklist yang dipakai gak bisa jalan, dan fallback ke mode dipandu manual (lihat checklist masing-masing kategori).
