@@ -36,5 +36,5 @@ Laporkan dugaan akar masalah beserta bukti pendukung (log, timestamp, versi). Tu
 ## Setelah selesai
 
 - Balikin yang sifatnya sementara: WP_DEBUG off, folder yang di-rename, dll.
-- **Trigger verifikasi otomatis**: begitu user bilang situs sudah live/normal lagi, Claude infokan dulu ("situs sudah live, saya cek ulang lewat browser ya") lalu langsung buka situsnya via browser otomatis buat mastiin bener-bener normal (halaman utama, halaman yang tadi error, console browser bersih) — gak perlu diminta terpisah. Ini cuma verifikasi (baca/screenshot), bukan ubah setting apapun.
+- **Trigger verifikasi otomatis**: begitu user bilang situs sudah live/normal lagi, Claude infokan dulu ("situs sudah live, saya cek ulang lewat browser ya") lalu langsung buka situsnya via browser otomatis buat mastiin bener-bener normal (halaman utama, halaman yang tadi error, console browser bersih) — gak perlu diminta terpisah. Ini cuma verifikasi (baca/screenshot), bukan ubah setting apapun. (Setup akses browser-nya lihat `00-router.md` — Claude yang urus sendiri.)
 - Ringkasan root cause + rekomendasi biar gak terulang (pin versi plugin, tambah monitoring disk/uptime, dll).

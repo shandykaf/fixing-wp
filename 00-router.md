@@ -40,3 +40,18 @@ Berlaku di semua kategori, bukan cuma security. Kalau file/db yang dikasih user 
 - Kalau backup di-enkripsi (fitur premium beberapa plugin backup), minta password enkripsinya ke user dulu sebelum bisa diekstrak.
 - Backup gak otomatis berarti "bersih" — kalau diambil setelah masalah muncul, isinya ikut kebawa masalah yang sama. Tetap diperlakukan sesuai checklist kategori yang dipilih, bukan dilewati begitu aja.
 - **Kalau ada beberapa backup dari tanggal berbeda**, ini baseline yang berharga: ekstrak backup paling lama (dari sebelum gejala muncul) dan bandingkan (diff nama file + hash, atau isi db) dengan kondisi situs sekarang. File/baris db yang beda antara backup lama vs sekarang biasanya nunjuk langsung ke penyebabnya — dipakai di tiap kategori sesuai konteksnya (lihat checklist masing-masing).
+
+---
+
+## Setup akses browser (dikerjakan Claude sendiri, bukan manual oleh user)
+
+Berlaku di semua kategori — dibutuhkan tiap kali checklist nyebut "browser otomatis" atau trigger "situs sudah live". Repo ini dipakai lintas tool (Claude Code, opencode, dll), jadi caranya distandarkan pakai **Playwright MCP** — server MCP resmi Microsoft yang nyediain kontrol browser (navigate, klik, isi form, screenshot) lewat protokol MCP standar, didukung hampir semua coding agent modern.
+
+Claude WAJIB cek dan setup ini sendiri, tanpa minta user ketik command:
+
+1. Cek apakah tool browser udah tersedia (browser tool bawaan, atau MCP server Playwright yang udah keregister). Kalau udah ada, lanjut aja, gak perlu install ulang.
+2. Kalau belum ada, install & register sendiri sesuai tool yang lagi dipakai:
+   - **Claude Code**: jalankan `claude mcp add playwright -- npx -y @playwright/mcp@latest` (pakai `-s user` di belakangnya kalau mau kepasang permanen buat semua project di mesin itu, bukan cuma project ini) lewat tool Bash — bukan suruh user jalanin manual.
+   - **opencode atau tool lain yang support MCP**: cek dokumentasi config MCP tool tersebut (biasanya file config kayak `opencode.json`/`opencode.jsonc` dengan section `mcp`), lalu Claude tulis sendiri entry-nya via tool Write. Isinya intinya daftarin command `npx -y @playwright/mcp@latest` sebagai MCP server.
+3. Setelah keregister, reconnect/restart sesi MCP kalau tool-nya butuh itu, lalu verifikasi tool browser beneran muncul dan bisa dipanggil sebelum lanjut ke audit/setup/fixing/verifikasi via browser.
+4. Kalau ternyata tool yang dipakai gak support MCP sama sekali dan gak ada browser tool bawaan: infokan ke user bagian browser-otomatis di checklist yang dipakai gak bisa jalan, dan fallback ke mode dipandu manual (lihat checklist masing-masing kategori).

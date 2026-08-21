@@ -35,4 +35,4 @@ Sebutkan sumber masalahnya (backend: query/plugin mana; frontend: script/plugin 
 
 Bandingkan skor performance sebelum/sesudah (cache sudah di-purge di kedua pengukuran), pastikan fix gak balikin masalah lambatnya lagi.
 
-**Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya ukur ulang performance-nya ya") lalu langsung buka situs via browser otomatis buat cek visual (elemen gak rusak) dan ukur ulang TTFB/skor performance — gak perlu diminta terpisah.
+**Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya ukur ulang performance-nya ya") lalu langsung buka situs via browser otomatis buat cek visual (elemen gak rusak) dan ukur ulang TTFB/skor performance — gak perlu diminta terpisah. (Setup akses browser-nya lihat `00-router.md` — Claude yang urus sendiri.)
