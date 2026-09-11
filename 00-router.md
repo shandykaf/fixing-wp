@@ -36,10 +36,17 @@ Tunggu konfirmasi saya sebelum baca file checklist itu dan mulai eksekusi.
 
 Berlaku di semua kategori, bukan cuma security. Kalau file/db yang dikasih user bukan folder WordPress aktif tapi hasil backup dari plugin (WPvivid, UpdraftPlus, dll):
 
-- Formatnya biasanya zip terpisah antara file dan db (contoh WPvivid: `wpvividbackup_*_files_*.zip` dan `wpvividbackup_*_db_*.zip` isinya `.sql`). Kalau situsnya besar, file zip-nya sering displit jadi beberapa part (`_files_1.zip`, `_files_2.zip`, dst) — ekstrak SEMUA part, jangan cuma yang pertama.
+- **Jangan asumsi nama file atau lokasi foldernya** — beda plugin beda pola, dan WPvivid Pro malah ngebolehin user ganti folder backup. Cari dulu: `find <path yang dikasih user> -iname "*wpvivid*" -o -iname "*.zip" -o -iname "*.sql*"`, lalu simpulkan dari hasilnya mana yang file dan mana yang db. Kalau user cuma kasih path folder situs (bukan backup), backup lokal biasanya nyempil di dalam `wp-content/` — cari di situ.
+- Formatnya biasanya zip terpisah antara file dan db (pola WPvivid umumnya `..._files_....zip` dan `..._db_....zip` yang isinya `.sql`). Kalau situsnya besar, zip-nya sering displit jadi beberapa part bernomor — ekstrak SEMUA part, jangan cuma yang pertama, dan pastiin gak ada nomor yang bolong (part hilang = hasil ekstrak gak lengkap, gampang bikin salah kesimpulan "file X gak ada").
 - Kalau backup di-enkripsi (fitur premium beberapa plugin backup), minta password enkripsinya ke user dulu sebelum bisa diekstrak.
 - Backup gak otomatis berarti "bersih" — kalau diambil setelah masalah muncul, isinya ikut kebawa masalah yang sama. Tetap diperlakukan sesuai checklist kategori yang dipilih, bukan dilewati begitu aja.
 - **Kalau ada beberapa backup dari tanggal berbeda**, ini baseline yang berharga: ekstrak backup paling lama (dari sebelum gejala muncul) dan bandingkan (diff nama file + hash, atau isi db) dengan kondisi situs sekarang. File/baris db yang beda antara backup lama vs sekarang biasanya nunjuk langsung ke penyebabnya — dipakai di tiap kategori sesuai konteksnya (lihat checklist masing-masing).
+
+**Kalau user belum punya file backup-nya** (baru nyebut "backup-nya ada di WPvivid" tapi belum didownload), pandu ambilnya dulu — satu langkah per giliran seperti biasa:
+
+- Lewat wp-admin: menu WPvivid Backup → tab Backup & Restore → lihat daftar backup yang ada. Tiap backup ada tombol Download; panel download-nya nampilin part-part zip-nya satu per satu, **semuanya harus diambil**, bukan cuma yang pertama. Kalau belum ada backup sama sekali, bikin dulu (pilih database + files), tunggu selesai, baru download.
+- Lewat cPanel/SSH kalau wp-admin gak bisa diakses: cari folder backup-nya di dalam `wp-content/` (nama foldernya beda-beda, jangan asumsi — cari yang mengandung "wpvivid"), lalu download/copy dari situ.
+- Catatan penting buat kasus security: kalau situs lagi kompromi, hindari bikin backup BARU sebagai sumber investigasi — backup baru ikut kebawa malware-nya. Yang berharga justru backup LAMA dari sebelum gejala muncul.
 
 ---
 
