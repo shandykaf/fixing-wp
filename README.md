@@ -28,16 +28,23 @@ https://github.com/shandykaf/fixing-wp
 Baca panduan kerja dari repo ini dan ikuti instruksinya:
 https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
 
+Data situs:
+- Domain = ISI_DOMAIN
+- Akses yang saya punya = ISI_AKSES (sebut yang ada aja: cPanel / SSH / WP admin / FTP)
+- URL login kalau non-default (wp-admin diubah, port SSH beda, dll) = ISI_URL_LOGIN
+- Gejala yang saya lihat = ISI_GEJALA
+
 Sumber data (isi yang sesuai aja, sisanya hapus):
 - Folder file WordPress = ISI_PATH
 - File database (.sql / .sql.gz / .zip) = ISI_PATH
 - Backup WPvivid/UpdraftPlus (path zip-nya, atau folder tempat zip-zip itu) = ISI_PATH_BACKUP
 
-- Gejala yang saya lihat = ISI_GEJALA
-
 Kalau yang keisi baris backup, itu udah mencakup file + db sekaligus, dua baris di
 atasnya gak perlu diisi. Ekstrak sendiri dulu sesuai bagian "Sumber data berupa
 backup" di router, jangan minta saya unzip manual.
+
+Password/kredensial sengaja gak saya tulis di sini. Minta ke saya pas tahap yang
+memang butuh, jangan diminta di awal.
 
 Jangan eksekusi apapun sebelum saya konfirmasi di tiap tahap yang diminta router.
 ```
