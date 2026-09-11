@@ -28,9 +28,14 @@ https://github.com/shandykaf/fixing-wp
 Baca panduan kerja dari repo ini dan ikuti instruksinya:
 https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
 
-- File WordPress = ISI_PATH
-- Database dump = ISI_PATH
+- Sumber file WordPress = ISI_PATH
+- Sumber database = ISI_PATH
 - Gejala yang saya lihat = ISI_GEJALA
+
+Sumber di atas boleh berupa folder biasa, file .sql/.sql.gz, file .zip, atau backup
+plugin (WPvivid/UpdraftPlus). Kalau file & db jadi satu di backup yang sama, tulis
+path yang sama di dua baris itu. Kalau masih berbentuk arsip, ekstrak sendiri dulu
+sesuai bagian "Sumber data berupa backup" di router, jangan minta saya ekstrak manual.
 
 Jangan eksekusi apapun sebelum saya konfirmasi di tiap tahap yang diminta router.
 ```
