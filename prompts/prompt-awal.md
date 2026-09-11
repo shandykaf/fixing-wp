@@ -10,17 +10,30 @@ https://github.com/shandykaf/fixing-wp
 Baca panduan kerja dari repo ini dan ikuti instruksinya:
 https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
 
-- Sumber file WordPress = ISI_PATH
-- Sumber database = ISI_PATH
+Sumber data (isi yang sesuai aja, sisanya hapus):
+- Folder file WordPress = ISI_PATH
+- File database (.sql / .sql.gz / .zip) = ISI_PATH
+- Backup WPvivid/UpdraftPlus (path zip-nya, atau folder tempat zip-zip itu) = ISI_PATH_BACKUP
+
 - Gejala yang saya lihat = ISI_GEJALA
 
-Sumber di atas boleh berupa folder biasa, file .sql/.sql.gz, file .zip, atau backup
-plugin (WPvivid/UpdraftPlus). Kalau file & db jadi satu di backup yang sama, tulis
-path yang sama di dua baris itu. Kalau masih berbentuk arsip, ekstrak sendiri dulu
-sesuai bagian "Sumber data berupa backup" di router, jangan minta saya ekstrak manual.
+Kalau yang keisi baris backup, itu udah mencakup file + db sekaligus, dua baris di
+atasnya gak perlu diisi. Ekstrak sendiri dulu sesuai bagian "Sumber data berupa
+backup" di router, jangan minta saya unzip manual.
 
 Jangan eksekusi apapun sebelum saya konfirmasi di tiap tahap yang diminta router.
 ```
+
+## Contoh terisi (kasus pakai backup WPvivid)
+
+```
+Sumber data (isi yang sesuai aja, sisanya hapus):
+- Backup WPvivid/UpdraftPlus (path zip-nya, atau folder tempat zip-zip itu) = /home/shandy/kasus-klienA/wpvivid
+
+- Gejala yang saya lihat = situs redirect ke domain judi kalau dibuka dari Google, tapi normal kalau diketik langsung. Mulai kira-kira 3 hari lalu.
+```
+
+Di contoh itu `/home/shandy/kasus-klienA/wpvivid` adalah folder berisi semua zip WPvivid (file + db, termasuk part-part-nya). Dua baris sumber lainnya dihapus karena sudah tercakup di backup.
 
 ## Catatan
 
