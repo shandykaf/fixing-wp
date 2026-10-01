@@ -11,6 +11,7 @@ Baca panduan kerja dari repo ini dan ikuti instruksinya:
 https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
 
 Data situs:
+- Tool yang saya pakai = ISI_TOOL (Claude Code / opencode / Cursor / Codex / dll)
 - Domain = ISI_DOMAIN
 - Akses yang saya punya = ISI_AKSES (sebut yang ada aja: cPanel / SSH / WP admin / FTP)
 - URL login kalau non-default (wp-admin diubah, port SSH beda, dll) = ISI_URL_LOGIN
@@ -35,6 +36,7 @@ Jangan eksekusi apapun sebelum saya konfirmasi di tiap tahap yang diminta router
 
 ```
 Data situs:
+- Tool yang saya pakai = Claude Code
 - Domain = klienA.co.id
 - Akses yang saya punya = cPanel + WP admin (SSH gak ada)
 - URL login kalau non-default (wp-admin diubah, port SSH beda, dll) = default semua
@@ -49,6 +51,8 @@ Di contoh itu `/home/shandy/kasus-klienA/wpvivid` adalah folder berisi semua zip
 ## Catatan
 
 - Repo ini private, pastikan Claude Code/opencode sudah punya autentikasi GitHub (misal `gh auth login`) sebelum menjalankan prompt di atas, kalau belum akan gagal akses (404).
+- **Sebutin tool yang dipakai** (Claude Code, opencode, Cursor, Codex, dll) karena beberapa langkah beda caranya per tool — terutama setup akses browser (Playwright MCP), yang perintah/config-nya beda di tiap tool. Dengan disebut di awal, agent-nya gak perlu nebak atau balik nanya.
+- Soal pilihan model: patokan per fase ada di bagian "Pilihan model per fase" di `00-router.md`. Ringkasnya Sonnet buat kerja mekanis (scan file, eksekusi), Opus buat fase penilaian temuan dan analisis vektor masuk. Agent-nya bakal ngasih tau kapan sebaiknya pindah model; kamu yang mutusin.
 - Path lokal (file WordPress, db dump) selalu path di mesin yang menjalankan Claude Code, bukan path di repo GitHub.
 - **Jangan tulis password/API key di prompt awal.** Cukup sebut akses apa yang kamu punya (cPanel, SSH, dll); kredensialnya dikasih belakangan pas ada tahap yang memang butuh — misal Claude mau login wp-admin lewat browser. Ingat apapun yang kamu ketik ke chat ikut kecatat di transcript sesi, jadi kasih seperlunya aja, dan ganti password setelah kasus selesai kalau kamu share kredensial yang sensitif.
 - Bentuk sumber data yang didukung: folder WordPress aktif, hasil ekstrak backup, file `.sql`/`.sql.gz`, file `.zip`, atau backup plugin (WPvivid, UpdraftPlus, dll). Kalau backup-nya displit jadi beberapa part (`_files_1.zip`, `_files_2.zip`, dst) atau dienkripsi, sebutkan di prompt — part-nya harus lengkap semua, dan yang dienkripsi butuh passwordnya.

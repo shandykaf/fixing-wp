@@ -29,6 +29,7 @@ Baca panduan kerja dari repo ini dan ikuti instruksinya:
 https://raw.githubusercontent.com/shandykaf/fixing-wp/main/00-router.md
 
 Data situs:
+- Tool yang saya pakai = ISI_TOOL (Claude Code / opencode / Cursor / Codex / dll)
 - Domain = ISI_DOMAIN
 - Akses yang saya punya = ISI_AKSES (sebut yang ada aja: cPanel / SSH / WP admin / FTP)
 - URL login kalau non-default (wp-admin diubah, port SSH beda, dll) = ISI_URL_LOGIN

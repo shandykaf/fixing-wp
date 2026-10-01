@@ -9,7 +9,7 @@ Entry point tunggal. Isi [ISI] lalu jalankan prompt ini duluan sebelum baca chec
 Saya butuh investigasi masalah di website WordPress. Jangan baca atau eksekusi checklist apapun dulu, mulai dari klasifikasi.
 
 Data situs:
-Domain [ISI]. Akses [ISI: cPanel/SSH/WP admin/FTP]. Gejala [ISI: deskripsikan sedetail mungkin, kapan mulai, ada perubahan terakhir gak sebelum masalah muncul]. Screenshot/error message kalau ada [ISI atau "tidak ada"].
+Tool yang dipakai [ISI: Claude Code / opencode / Cursor / Codex / dll]. Domain [ISI]. Akses [ISI: cPanel/SSH/WP admin/FTP]. Gejala [ISI: deskripsikan sedetail mungkin, kapan mulai, ada perubahan terakhir gak sebelum masalah muncul]. Screenshot/error message kalau ada [ISI atau "tidak ada"].
 
 Klasifikasikan ke salah satu dari 5 kategori berikut, kasih alasan singkat kenapa pilih itu:
 
@@ -29,6 +29,30 @@ Setelah klasifikasi, sebutkan nama file checklist yang harus dibaca:
 - Kategori 5 → 05-performance-konflik.md
 
 Tunggu konfirmasi saya sebelum baca file checklist itu dan mulai eksekusi.
+
+---
+
+## Pilihan model per fase
+
+Berlaku kalau dijalanin di atas model Claude (Claude Code dan sejenisnya). Kalau tool-nya pakai model lain, ambil prinsipnya aja: model paling kuat buat fase penilaian & root cause, model cepat buat fase mekanis.
+
+Patokannya: **Sonnet jadi default, naik ke Opus cuma di momen penentuan.** Fase paling boros token (scan ribuan file, baca output VirusTotal, grep pola) itu kerja mekanis — buang-buang model mahal di situ. Tapi fase "ini malicious atau library minified yang sah?" taruhannya paling tinggi: salah hapus bikin situs rusak, salah lolos bikin reinfeksi.
+
+| Fase | Model | Kenapa |
+|---|---|---|
+| Klasifikasi kategori (router ini) | Sonnet | Baca gejala, pilih kategori. Ringan. |
+| Scan file, jalanin vt-hash-check, ekstrak backup | Sonnet | Mayoritas tool call + output panjang, bukan reasoning. |
+| **Menilai kode mencurigakan** (malicious vs obfuscated yang sah) | **Opus** | False positive = hapus file sah. False negative = backdoor lolos. |
+| **Analisis vektor masuk** (korelasi access log + versi plugin + timestamp) | **Opus** | Multi-step reasoning dari bukti berserakan, paling gampang salah simpul. |
+| Scan db dump | Sonnet | Pattern matching; naik Opus kalau nemu yang ambigu. |
+| **Approve daftar hapus sebelum eksekusi** | **Opus** | Titik gak bisa diundur. |
+| Eksekusi pembersihan, deploy | Sonnet | Keputusannya udah diambil di fase sebelumnya. |
+| Setup browser (plugin security, cPanel) | Sonnet | Multi-step UI, butuh ketelitian bukan kedalaman. Naik Opus kalau nyangkut terus di UI-nya. |
+| Nulis laporan | Sonnet | Merangkum temuan yang udah ada. |
+
+Claude WAJIB kasih tau user pas masuk fase yang beda modelnya, misal: "masuk fase penilaian temuan, saranku pindah ke Opus dulu (`/model opus`) biar penilaiannya lebih teliti" — user yang mutusin pindah atau enggak, jangan maksa, dan jangan berhenti kerja nunggu jawaban. Pindah model di tengah sesi itu normal dan memang disarankan di sini.
+
+Pengecualian: kalau kasusnya kecil dan jelas (misal satu backdoor obvious di uploads), Sonnet cukup dari awal sampai akhir. Yang bener-bener nuntut Opus itu kasus yang **vektor masuknya belum ketemu** atau **situsnya udah pernah reinfeksi** — di situ reasoning yang jadi penentu.
 
 ---
 
