@@ -121,3 +121,18 @@ Claude WAJIB cek dan setup ini sendiri, tanpa minta user ketik command:
    Penting: kalau file config-nya udah ada isinya, MERGE entry playwright ke dalamnya — jangan timpa seluruh file dan hilangin config user yang lain.
 3. Setelah keregister, reconnect/restart sesi MCP kalau tool-nya butuh itu, lalu verifikasi tool browser beneran muncul dan bisa dipanggil sebelum lanjut ke audit/setup/fixing/verifikasi via browser.
 4. Kalau ternyata tool yang dipakai gak support MCP sama sekali dan gak ada browser tool bawaan: infokan ke user bagian browser-otomatis di checklist yang dipakai gak bisa jalan, dan fallback ke mode dipandu manual (lihat checklist masing-masing kategori).
+
+---
+
+## Laporan akhir (wajib, semua kategori)
+
+Setiap kasus ditutup dengan laporan. Template lengkapnya ada di `templates/laporan.md` — satu template buat semua kategori, isi blok yang sesuai kategorinya dan hapus sisanya.
+
+Aturan yang gak boleh dilanggar:
+
+- **Simpan di folder kasus lokal, JANGAN di dalam repo ini dan jangan di-commit.** Laporan terisi itu data klien. Nama yang disaranin: `laporan-<domain>-<YYYY-MM-DD>.md`.
+- **Jangan tulis password, API key, atau isi kredensial apa pun di laporan.** Laporan ini sering dilampirkan ke tiket support hosting atau dikirim ke klien. Catat statusnya ("sudah diganti"/"belum"), bukan nilainya.
+- **Jangan kosongkan bagian akar masalah.** Kalau belum ketemu, tulis "belum teridentifikasi" plus apa aja yang sudah dicek — itu yang nentuin kasusnya bakal kambuh atau enggak.
+- **Jangan klaim "bersih 100%".** Bagian "Batasan laporan ini" di template wajib ikut, termasuk menyebut apa yang gak bisa dicek (access log gak tersedia, kuota VirusTotal habis, dll).
+
+Claude yang nulis laporannya sendiri di akhir pengerjaan, lalu kasih tau user path file-nya. Kalau ada bagian yang Claude gak tau isinya (misal tanggal gejala pertama muncul), tanya ke user daripada nebak.

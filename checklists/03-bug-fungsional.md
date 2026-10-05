@@ -20,3 +20,5 @@ Setelah selesai:
 Test ulang skenario reproduce dari awal buat mastiin fix beneran jalan, bukan cuma nutup gejala. Purge cache lagi sebelum test biar hasilnya valid.
 
 **Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya test ulang lewat browser ya") lalu langsung ulangi skenario reproduce via browser otomatis di situs live — gak perlu diminta terpisah. Ini cuma testing (baca/interaksi buat verifikasi), bukan ubah kode/setting apapun. (Setup akses browser-nya lihat `00-router.md` — Claude yang urus sendiri.)
+
+**Laporan akhir**: tutup kasus dengan laporan pakai template `templates/laporan.md` (lihat aturannya di bagian "Laporan akhir" di `00-router.md` — disimpan di folder kasus lokal, bukan di repo).
