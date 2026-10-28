@@ -34,7 +34,7 @@ Tunggu konfirmasi saya sebelum baca file checklist itu dan mulai eksekusi.
 
 ## Pilihan model per fase
 
-Berlaku kalau dijalanin di atas model Claude (Claude Code dan sejenisnya). Kalau tool-nya pakai model lain, ambil prinsipnya aja: model paling kuat buat fase penilaian & root cause, model cepat buat fase mekanis.
+Berlaku kalau dijalanin di atas model Claude (Claude Code dan sejenisnya). Kalau tool-nya pakai model lain, lihat bagian "Kalau tool-nya bukan Claude" di bawah — prinsipnya sama, cuma nama modelnya yang perlu dipetakan dulu.
 
 Patokannya: **Sonnet jadi model utama sesi, naik ke Opus cuma di momen penentuan, Haiku cuma buat kerja kasar yang diparalelkan.** Fase paling boros token (scan ribuan file, baca output VirusTotal, grep pola) itu kerja mekanis — buang-buang model mahal di situ. Tapi fase "ini malicious atau library minified yang sah?" taruhannya paling tinggi: salah hapus bikin situs rusak, salah lolos bikin reinfeksi.
 
@@ -75,6 +75,21 @@ Jadi di satu kasus normal, user cuma ngetik `/model` dua kali: naik sekali pas m
 **Kategori 2-5**: biasanya Sonnet dari awal sampai akhir. Naik Opus cuma kalau akar masalahnya buntu — error yang gak bisa direproduksi, bug tanpa penyebab jelas setelah ditrace, atau situs lambat yang sumbernya gak ketemu dari Query Monitor. Setelah ketemu, turun Sonnet lagi buat eksekusi.
 
 **Haiku gak pernah diketik user** di workflow ini. Haiku kepakai kalau Claude sendiri yang nyebar subagent buat kerja borongan — keputusan internal, bukan setting sesi.
+
+### Kalau tool-nya bukan Claude (opencode, Antigravity, Cursor, dll)
+
+Tool lain bisa jalan di atas model apa aja (Gemini, GPT, Qwen, model lokal, campuran), jadi nama di tabel atas gak langsung kepakai. Begitu selesai klasifikasi kategori dan SEBELUM mulai eksekusi checklist, agent lakukan ini:
+
+1. **Tanya ke user model apa aja yang tersedia di tool-nya.** Boleh dijawab dengan diketik, atau user kirim screenshot menu pemilih model — baca dari situ kalau agent-nya bisa lihat gambar. Kalau gak bisa baca gambar, bilang terus terang dan minta daftarnya diketik aja.
+2. **Petakan ke tiga peran** dari daftar itu:
+   - *Penilaian* — buat fase menilai temuan, analisis vektor masuk, approve daftar hapus. Pilih yang paling kuat reasoning-nya.
+   - *Kerja harian* — model sesi buat scan, eksekusi, laporan. Yang seimbang cepat & cukup pintar.
+   - *Borongan* (opsional) — buat subagent kerja kasar volume gede. Yang paling murah/cepat. Skip kalau gak ada.
+3. **Jangan nebak kekuatan model dari namanya.** Kalau agent gak yakin mana yang paling kuat di daftar itu, tanya ke user ("dari daftar ini, mana yang paling pintar menurut kamu / paling mahal?") daripada asal tebak. Nama model berubah cepat, salah petakan bikin fase penilaian jalan di model yang lemah — justru fase yang paling gak boleh salah.
+4. **Sebutkan hasil pemetaannya ke user** sebelum lanjut, misal: "oke, saya pakai X buat kerja harian dan Y pas fase penilaian nanti" — biar user bisa koreksi kalau keliru.
+5. **Kalau cuma ada satu model**, ya sudah, jalan apa adanya. Tapi catat di laporan akhir bahwa fase penilaian dikerjakan di model yang sama dengan fase mekanis, jadi pembacanya tahu kedalaman penilaiannya terbatas.
+
+Setelah dipetakan, tabel fase dan timeline `/model` di atas tetap berlaku — tinggal ganti "Sonnet/Opus/Haiku" dengan nama model hasil pemetaan, dan ganti perintah `/model` dengan cara ganti model di tool tersebut.
 
 ### Catatan khusus Haiku
 
