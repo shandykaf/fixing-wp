@@ -53,6 +53,29 @@ Patokannya: **Sonnet jadi model utama sesi, naik ke Opus cuma di momen penentuan
 
 Claude WAJIB kasih tau user pas masuk fase yang beda modelnya, misal: "masuk fase penilaian temuan, saranku pindah ke Opus dulu (`/model opus`) biar penilaiannya lebih teliti" — user yang mutusin pindah atau enggak, jangan maksa, dan jangan berhenti kerja nunggu jawaban. Pindah model di tengah sesi itu normal dan memang disarankan di sini.
 
+### Aturan ngasih tau model (wajib, jangan dilewat)
+
+Setiap mulai fase baru atau mau eksekusi sesuatu, Claude sebut dulu model yang dipakai/disaranin — satu baris pendek di awal, jangan tiap pesan.
+
+- Kalau model sekarang **sudah sesuai**: cukup satu frasa, misal "(lanjut di Sonnet) mulai scan file sekarang."
+- Kalau model sekarang **beda dari yang disaranin**: sebut jelas + perintahnya, misal "Fase ini idealnya di Opus — `/model opus` dulu kalau mau, saya tetap lanjut sambil nunggu."
+- Kalau user **gak pindah juga**, jangan diulang-ulang tiap pesan. Cukup catat sekali di laporan akhir bahwa fase itu dikerjakan di model yang lebih rendah dari saran.
+
+### Kapan ngetik `/model` (urutan praktis, kasus security)
+
+| Momen di chat | Ketik | Lalu |
+|---|---|---|
+| Awal sesi, sebelum paste prompt awal | `/model sonnet` | Paste prompt awal. Sonnet jalan terus: klasifikasi → ekstrak backup → scan file → vt-hash-check → scan db. |
+| Begitu Claude selesai scan dan nyodorin daftar temuan | `/model opus` | Baru balas "nilai satu-satu mana yang beneran backdoor". Tetap di Opus sampai penilaian temuan, analisis vektor masuk, dan review daftar hapus kelar. |
+| Setelah kamu approve daftar hapus | `/model sonnet` | Baru bilang "eksekusi". Sisanya di Sonnet: hapus file, deploy, setup plugin security, nulis laporan. |
+| Kalau re-scan 3-7 hari kemudian ternyata kotor lagi | `/model opus` | Artinya vektor masuk belum ketemu — balik jadi soal reasoning. |
+
+Jadi di satu kasus normal, user cuma ngetik `/model` dua kali: naik sekali pas mau menilai temuan, turun sekali pas mau eksekusi.
+
+**Kategori 2-5**: biasanya Sonnet dari awal sampai akhir. Naik Opus cuma kalau akar masalahnya buntu — error yang gak bisa direproduksi, bug tanpa penyebab jelas setelah ditrace, atau situs lambat yang sumbernya gak ketemu dari Query Monitor. Setelah ketemu, turun Sonnet lagi buat eksekusi.
+
+**Haiku gak pernah diketik user** di workflow ini. Haiku kepakai kalau Claude sendiri yang nyebar subagent buat kerja borongan — keputusan internal, bukan setting sesi.
+
 ### Catatan khusus Haiku
 
 Slot Haiku di workflow ini sempit, dan itu disengaja:

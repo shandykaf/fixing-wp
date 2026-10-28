@@ -17,7 +17,7 @@ Template laporan hasil pengerjaan, dipakai di semua kategori. Isi blok yang sesu
 | Kategori masalah | <1 Security/malware · 2 Error teknis · 3 Bug fungsional · 4 Integrasi/webhook · 5 Performance> |
 | Tanggal pengerjaan | <YYYY-MM-DD, sampai YYYY-MM-DD kalau lebih dari sehari> |
 | Status akhir | <Selesai · Selesai dengan catatan · Belum tuntas> |
-| Dikerjakan dengan | <tool + model, misal Claude Code (Sonnet untuk scan, Opus untuk penilaian)> |
+| Dikerjakan dengan | <tool + model per fase, misal Claude Code — Sonnet untuk scan & eksekusi, Opus untuk penilaian temuan & vektor masuk. Sebutkan juga kalau ada fase yang dikerjakan di model lebih rendah dari saran.> |
 
 ## Ringkasan
 
