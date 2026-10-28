@@ -36,23 +36,32 @@ Tunggu konfirmasi saya sebelum baca file checklist itu dan mulai eksekusi.
 
 Berlaku kalau dijalanin di atas model Claude (Claude Code dan sejenisnya). Kalau tool-nya pakai model lain, ambil prinsipnya aja: model paling kuat buat fase penilaian & root cause, model cepat buat fase mekanis.
 
-Patokannya: **Sonnet jadi default, naik ke Opus cuma di momen penentuan.** Fase paling boros token (scan ribuan file, baca output VirusTotal, grep pola) itu kerja mekanis — buang-buang model mahal di situ. Tapi fase "ini malicious atau library minified yang sah?" taruhannya paling tinggi: salah hapus bikin situs rusak, salah lolos bikin reinfeksi.
+Patokannya: **Sonnet jadi model utama sesi, naik ke Opus cuma di momen penentuan, Haiku cuma buat kerja kasar yang diparalelkan.** Fase paling boros token (scan ribuan file, baca output VirusTotal, grep pola) itu kerja mekanis — buang-buang model mahal di situ. Tapi fase "ini malicious atau library minified yang sah?" taruhannya paling tinggi: salah hapus bikin situs rusak, salah lolos bikin reinfeksi.
 
 | Fase | Model | Kenapa |
 |---|---|---|
-| Klasifikasi kategori (router ini) | Sonnet | Baca gejala, pilih kategori. Ringan. |
+| Klasifikasi kategori (router ini) | Sonnet | Baca gejala, pilih kategori. Salah kategori = salah checklist, jadi jangan Haiku. |
 | Scan file, jalanin vt-hash-check, ekstrak backup | Sonnet | Mayoritas tool call + output panjang, bukan reasoning. |
+| Kerja kasar yang bisa diparalelkan (ekstrak banyak part zip, enumerasi file, kumpulin hasil `find`/`grep`, diff daftar file backup vs sekarang) | **Haiku** (sebagai subagent) | Hasilnya verifiable dan gak butuh penilaian. Jalanin lewat subagent, jangan ganti model sesi utama. |
 | **Menilai kode mencurigakan** (malicious vs obfuscated yang sah) | **Opus** | False positive = hapus file sah. False negative = backdoor lolos. |
 | **Analisis vektor masuk** (korelasi access log + versi plugin + timestamp) | **Opus** | Multi-step reasoning dari bukti berserakan, paling gampang salah simpul. |
 | Scan db dump | Sonnet | Pattern matching; naik Opus kalau nemu yang ambigu. |
 | **Approve daftar hapus sebelum eksekusi** | **Opus** | Titik gak bisa diundur. |
 | Eksekusi pembersihan, deploy | Sonnet | Keputusannya udah diambil di fase sebelumnya. |
 | Setup browser (plugin security, cPanel) | Sonnet | Multi-step UI, butuh ketelitian bukan kedalaman. Naik Opus kalau nyangkut terus di UI-nya. |
-| Nulis laporan | Sonnet | Merangkum temuan yang udah ada. |
+| Nulis laporan | Sonnet | Merangkum temuan — sintesis, bukan transkrip. |
 
 Claude WAJIB kasih tau user pas masuk fase yang beda modelnya, misal: "masuk fase penilaian temuan, saranku pindah ke Opus dulu (`/model opus`) biar penilaiannya lebih teliti" — user yang mutusin pindah atau enggak, jangan maksa, dan jangan berhenti kerja nunggu jawaban. Pindah model di tengah sesi itu normal dan memang disarankan di sini.
 
-Pengecualian: kalau kasusnya kecil dan jelas (misal satu backdoor obvious di uploads), Sonnet cukup dari awal sampai akhir. Yang bener-bener nuntut Opus itu kasus yang **vektor masuknya belum ketemu** atau **situsnya udah pernah reinfeksi** — di situ reasoning yang jadi penentu.
+### Catatan khusus Haiku
+
+Slot Haiku di workflow ini sempit, dan itu disengaja:
+
+- **Context-nya 200K, jauh di bawah Sonnet/Opus yang 1M.** Investigasi WordPress itu rakus context (baca ratusan file, output scan panjang) — sesi utama di Haiku bakal cepat penuh. Makanya posisinya sebagai subagent buat tugas pendek, bukan model sesi.
+- **Jangan dipakai buat apa pun yang sifatnya menilai atau menghapus.** Bedain backdoor dari library minified yang sah itu justru tugas tersulit di seluruh workflow ini — bukan tempat buat model termurah.
+- **Jujurnya: buat kasus kecil-menengah, Haiku sering gak sepadan sama ribetnya.** Sonnet udah cukup cepat buat kerja mekanis, dan nambah subagent itu nambah titik koordinasi. Haiku baru kerasa untungnya kalau volumenya gede — misal situs dengan puluhan ribu file, atau beberapa backup yang harus diekstrak dan di-diff barengan.
+
+Pengecualian umum: kalau kasusnya kecil dan jelas (misal satu backdoor obvious di uploads), Sonnet cukup dari awal sampai akhir. Yang bener-bener nuntut Opus itu kasus yang **vektor masuknya belum ketemu** atau **situsnya udah pernah reinfeksi** — di situ reasoning yang jadi penentu.
 
 ---
 
