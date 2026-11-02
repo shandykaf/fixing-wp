@@ -2,7 +2,7 @@
 
 Template laporan hasil pengerjaan, dipakai di semua kategori. Isi blok yang sesuai kategorinya, hapus blok yang gak relevan.
 
-**Penting soal penyimpanan:** laporan yang sudah terisi itu data klien — simpan di folder kasus lokal (sebelah file/db yang dikerjakan), **jangan** di dalam repo ini dan jangan di-commit. Nama file yang disaranin: `laporan-<domain>-<YYYY-MM-DD>.md`.
+**Penting soal penyimpanan:** laporan yang sudah terisi itu data klien — simpan di folder kasus, **sejajar dengan folder WordPress-nya, bukan di dalamnya** (folder WordPress itu nanti di-full-replace ke production; laporan yang nyempil di dalamnya ikut keupload ke webroot dan isinya jadi peta buat penyerang). Jangan juga ditaruh di repo ini atau di tempat acak. Nama file yang disaranin: `laporan-<domain>-<YYYY-MM-DD>.md`. Detail strukturnya ada di bagian "Di mana filenya disimpan" di `00-router.md`.
 
 **Penting soal isi:** JANGAN tulis password, API key, atau isi kredensial apa pun di laporan. Laporan ini sering dilampirkan ke tiket support hosting atau dikirim ke klien. Cukup catat "sudah diganti" / "belum diganti", bukan nilainya.
 

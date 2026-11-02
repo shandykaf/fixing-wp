@@ -190,9 +190,32 @@ Gunanya juga buat sesi yang putus: kalau context ke-compact, kuota habis, atau l
 
 Setiap kasus ditutup dengan laporan. Template lengkapnya ada di `templates/laporan.md` — satu template buat semua kategori, isi blok yang sesuai kategorinya dan hapus sisanya. Timeline dan daftar tindakannya **disalin dari worklog, bukan dari ingatan**.
 
+### Di mana filenya disimpan
+
+**Di folder kasus, SEJAJAR dengan folder WordPress-nya — bukan di dalamnya.** Strukturnya kira-kira begini:
+
+```
+~/kasus/klienA/                          ← folder kasus, worklog & laporan di sini
+├── worklog-klienA.co.id-2026-11-02.md
+├── laporan-klienA.co.id-2026-11-02.md
+├── backup-asli/                         ← salinan utuh sebelum diutak-atik
+├── wp-files/                            ← copy yang dikerjakan & nanti dideploy
+└── db/
+```
+
+Kenapa gak boleh di dalam folder WordPress-nya:
+
+- **Folder itu nanti di-full-replace ke production.** Laporan yang nyempil di dalamnya ikut keupload ke webroot dan bisa dibuka publik — isinya daftar path backdoor, plugin yang masih vulnerable, dan apa yang belum ditambal. Itu peta jadi buat penyerang berikutnya.
+- **Ngotorin scan dan diff.** File tambahan di dalam webroot bikin hasil perbandingan vs backup jadi berisik.
+- **Ikut kehapus.** Kalau copy kerjanya dibuang setelah deploy, catatannya ikut hilang.
+
+Jangan juga ditaruh di tempat acak (home directory, Desktop, folder repo ini). Satu kasus = satu folder, semua artefaknya di situ.
+
+**Sebelum deploy, pastikan gak ada worklog/laporan yang nyasar ke dalam folder yang mau diupload** — cek dengan `find <folder-yang-dideploy> -iname "*worklog*" -o -iname "*laporan*"`, harus kosong.
+
 ### Aturan yang gak boleh dilanggar (berlaku buat dua-duanya)
 
-- **Simpan di folder kasus lokal, JANGAN di dalam repo ini dan jangan di-commit.** Isinya data klien. Nama yang disaranin: `worklog-<domain>-<YYYY-MM-DD>.md` dan `laporan-<domain>-<YYYY-MM-DD>.md`.
+- **JANGAN di dalam repo ini dan jangan di-commit.** Isinya data klien.
 - **Jangan tulis password, API key, atau isi kredensial apa pun.** Laporan sering dilampirkan ke tiket support hosting atau dikirim ke klien. Catat statusnya ("sudah diganti"/"belum"), bukan nilainya.
 - **Jangan kosongkan bagian akar masalah.** Kalau belum ketemu, tulis "belum teridentifikasi" plus apa aja yang sudah dicek — itu yang nentuin kasusnya bakal kambuh atau enggak.
 - **Jangan klaim "bersih 100%".** Bagian "Batasan laporan ini" di template wajib ikut, termasuk menyebut apa yang gak bisa dicek (access log gak tersedia, kuota VirusTotal habis, dll).

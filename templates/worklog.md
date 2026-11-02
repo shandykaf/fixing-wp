@@ -8,7 +8,7 @@ Catatan kerja berjalan, di-append selama pengerjaan. Bedanya dengan `laporan.md`
 - **Sesi bisa putus.** Context ke-compact, kuota habis, atau lanjut besok — sesi baru tinggal baca worklog buat tahu posisi terakhir, gak perlu ngulang investigasi.
 - **Laporan akhir gak ditulis dari ingatan.** Timeline dan daftar tindakan disalin dari sini, jadi gak ada detail yang melar atau hilang.
 
-**Aturan sama kayak laporan:** simpan di folder kasus lokal (jangan di repo ini, jangan di-commit), dan jangan tulis password/API key di dalamnya. Nama yang disaranin: `worklog-<domain>-<YYYY-MM-DD>.md`.
+**Aturan sama kayak laporan:** simpan di folder kasus **sejajar dengan folder WordPress-nya, bukan di dalamnya** (folder WordPress nanti di-full-replace ke production — catatan yang nyempil di dalamnya ikut keupload ke webroot). Jangan di repo ini, jangan di tempat acak, dan jangan tulis password/API key di dalamnya. Nama yang disaranin: `worklog-<domain>-<YYYY-MM-DD>.md`. Struktur foldernya ada di bagian "Di mana filenya disimpan" di `00-router.md`.
 
 **Jangan nulis tiap tool call** — itu cuma bikin noise. Append cuma di lima titik ini:
 
