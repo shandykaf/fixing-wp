@@ -37,4 +37,4 @@ Bandingkan skor performance sebelum/sesudah (cache sudah di-purge di kedua pengu
 
 **Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya ukur ulang performance-nya ya") lalu langsung buka situs via browser otomatis buat cek visual (elemen gak rusak) dan ukur ulang TTFB/skor performance — gak perlu diminta terpisah. (Setup akses browser-nya lihat `00-router.md` — Claude yang urus sendiri.)
 
-**Laporan akhir**: tutup kasus dengan laporan pakai template `templates/laporan.md` (lihat aturannya di bagian "Laporan akhir" di `00-router.md` — disimpan di folder kasus lokal, bukan di repo).
+**Catatan kerja & laporan**: selama kerja, append worklog pakai `templates/worklog.md` (terutama sebelum tiap tindakan destruktif). Di akhir, tutup kasus dengan laporan pakai `templates/laporan.md`, disusun dari worklog itu. Aturannya di bagian "Catatan kerja & laporan" di `00-router.md` — dua-duanya disimpan di folder kasus lokal, bukan di repo.

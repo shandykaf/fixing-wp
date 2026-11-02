@@ -17,7 +17,8 @@ Gak perlu clone repo ini. Claude Code baca checklist langsung dari raw GitHub UR
 - `checklists/` — langkah investigasi per kategori (security, error teknis, bug fungsional, integrasi/webhook, performance).
 - `scripts/vt-hash-check.py` — cek hash file ke VirusTotal Public API, dipakai kalau checklist security yang kepilih.
 - `prompts/prompt-awal.md` — template prompt singkat untuk memulai tiap kasus baru.
-- `templates/laporan.md` — template laporan hasil pengerjaan, dipakai di semua kategori. Laporan yang sudah terisi disimpan di folder kasus lokal, bukan di repo ini.
+- `templates/worklog.md` — template catatan kerja berjalan, di-append selama pengerjaan (terutama sebelum tiap tindakan destruktif, biar ada jejak pemulihan).
+- `templates/laporan.md` — template laporan hasil pengerjaan, dipakai di semua kategori, disusun dari worklog. Worklog & laporan yang sudah terisi disimpan di folder kasus lokal, bukan di repo ini.
 
 ## Prompt awal (cuplikan)
 

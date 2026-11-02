@@ -33,4 +33,4 @@ Test end-to-end pakai transaksi/data dummy dulu sebelum dianggap fix di live. Te
 
 **Trigger verifikasi otomatis**: begitu user bilang fix-nya sudah dideploy ke live, Claude infokan dulu ("fix sudah live, saya test end-to-end sekarang ya") lalu langsung jalanin test transaksi dummy via browser otomatis (checkout/flow yang relevan) — gak perlu diminta terpisah. Kalau testnya butuh transaksi beneran (bukan sandbox/dummy) yang bisa kena biaya nyata, konfirmasi dulu ke user sebelum jalan. (Setup akses browser-nya lihat `00-router.md` — Claude yang urus sendiri.)
 
-**Laporan akhir**: tutup kasus dengan laporan pakai template `templates/laporan.md` (lihat aturannya di bagian "Laporan akhir" di `00-router.md` — disimpan di folder kasus lokal, bukan di repo).
+**Catatan kerja & laporan**: selama kerja, append worklog pakai `templates/worklog.md` (terutama sebelum tiap tindakan destruktif). Di akhir, tutup kasus dengan laporan pakai `templates/laporan.md`, disusun dari worklog itu. Aturannya di bagian "Catatan kerja & laporan" di `00-router.md` — dua-duanya disimpan di folder kasus lokal, bukan di repo.

@@ -171,15 +171,30 @@ Claude WAJIB cek dan setup ini sendiri, tanpa minta user ketik command:
 
 ---
 
-## Laporan akhir (wajib, semua kategori)
+## Catatan kerja & laporan (wajib, semua kategori)
 
-Setiap kasus ditutup dengan laporan. Template lengkapnya ada di `templates/laporan.md` — satu template buat semua kategori, isi blok yang sesuai kategorinya dan hapus sisanya.
+Dua file, beda fungsi:
 
-Aturan yang gak boleh dilanggar:
+- **`templates/worklog.md`** — catatan berjalan, di-append **sambil** kerja.
+- **`templates/laporan.md`** — laporan akhir, disusun **dari worklog** pas kasus ditutup.
 
-- **Simpan di folder kasus lokal, JANGAN di dalam repo ini dan jangan di-commit.** Laporan terisi itu data klien. Nama yang disaranin: `laporan-<domain>-<YYYY-MM-DD>.md`.
-- **Jangan tulis password, API key, atau isi kredensial apa pun di laporan.** Laporan ini sering dilampirkan ke tiket support hosting atau dikirim ke klien. Catat statusnya ("sudah diganti"/"belum"), bukan nilainya.
+### Worklog (selama pengerjaan)
+
+Bukan log tiap tool call — itu noise. Di-append cuma di lima titik: sebelum tindakan destruktif, tiap temuan dikonfirmasi, tiap pindah fase, tiap keputusan user, tiap kendala. Detailnya di template.
+
+Yang paling gak boleh dilewat: **sebelum hapus/timpa/ubah apa pun, catat dulu target + lokasi backup salinannya.** Kalau situs rusak setelah pembersihan, ini satu-satunya cara tahu apa yang dicabut dan dari mana dipulihkan. Ditulis sebelum eksekusi, bukan sesudah.
+
+Gunanya juga buat sesi yang putus: kalau context ke-compact, kuota habis, atau lanjut besok, sesi baru tinggal baca worklog buat tahu posisi terakhir — gak usah ngulang investigasi dari nol.
+
+### Laporan akhir
+
+Setiap kasus ditutup dengan laporan. Template lengkapnya ada di `templates/laporan.md` — satu template buat semua kategori, isi blok yang sesuai kategorinya dan hapus sisanya. Timeline dan daftar tindakannya **disalin dari worklog, bukan dari ingatan**.
+
+### Aturan yang gak boleh dilanggar (berlaku buat dua-duanya)
+
+- **Simpan di folder kasus lokal, JANGAN di dalam repo ini dan jangan di-commit.** Isinya data klien. Nama yang disaranin: `worklog-<domain>-<YYYY-MM-DD>.md` dan `laporan-<domain>-<YYYY-MM-DD>.md`.
+- **Jangan tulis password, API key, atau isi kredensial apa pun.** Laporan sering dilampirkan ke tiket support hosting atau dikirim ke klien. Catat statusnya ("sudah diganti"/"belum"), bukan nilainya.
 - **Jangan kosongkan bagian akar masalah.** Kalau belum ketemu, tulis "belum teridentifikasi" plus apa aja yang sudah dicek — itu yang nentuin kasusnya bakal kambuh atau enggak.
 - **Jangan klaim "bersih 100%".** Bagian "Batasan laporan ini" di template wajib ikut, termasuk menyebut apa yang gak bisa dicek (access log gak tersedia, kuota VirusTotal habis, dll).
 
-Claude yang nulis laporannya sendiri di akhir pengerjaan, lalu kasih tau user path file-nya. Kalau ada bagian yang Claude gak tau isinya (misal tanggal gejala pertama muncul), tanya ke user daripada nebak.
+Claude yang nulis dua-duanya sendiri, lalu kasih tau user path file-nya. Kalau ada bagian yang Claude gak tau isinya (misal tanggal gejala pertama muncul), tanya ke user daripada nebak.
